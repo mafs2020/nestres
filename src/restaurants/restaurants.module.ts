@@ -1,4 +1,8 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
+import { RestaurantsController } from './restaurants.controller';
 
-@Module({})
+@Module({
+    controllers: [RestaurantsController]
+})
 export class RestaurantsModule {}
