@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Model, Column, PrimaryKey, Table, AutoIncrement, TableOptions, NotNull } from 'sequelize-typescript';
+import { Model, Column, PrimaryKey, Table, AutoIncrement, TableOptions } from 'sequelize-typescript';
 
 const options: TableOptions = {
   freezeTableName: true,
