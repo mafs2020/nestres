@@ -15,8 +15,6 @@ export class WsS3Service {
     s3 = new S3({
         
         accessKeyId: process.env.AWS_S3_USER_ACCESS_KEY,
-        // accessKeyId: 'AKIA2SYGUG7NDJ3HE44P',
-        // secretAccessKey: '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',
         secretAccessKey: process.env.AWS_S3_USER_SECRET_ACCESS_KEY,
     });
 
