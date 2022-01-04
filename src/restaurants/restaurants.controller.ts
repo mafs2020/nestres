@@ -77,11 +77,13 @@ export class RestaurantsController {
   @Post('upload/:id')
   @UseInterceptors(FileInterceptor('file'))
   async upload(@Param('id') id: string, @UploadedFile() file: Express.Multer.File, @Res() res: Response): Promise<Restaurant|any> {
-    
-    console.log('file :>> ', file);
+    console.log('id :>> ', id);
     try {
+      // Promise.all([])
+      const loction = await this.wsS3Service.uploadFile(file);
+
+      await this.RestaurantsModel.update({ image: loction }, { where: { id } } );
       
-      await this.wsS3Service.uploadFile(file);
       return res.json({mensje: 'se gurrdo imagen'});
     } catch (error) {
       return res.status(400).json({error});

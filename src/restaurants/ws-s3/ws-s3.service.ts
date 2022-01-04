@@ -2,10 +2,16 @@
 import { Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
+import { Restaurants } from '../resturnts.entity';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class WsS3Service {
-    constructor(private configService: ConfigService){}
+    constructor(
+        private configService: ConfigService,
+        @InjectModel(Restaurants)
+        private RestaurantsModel: typeof Restaurants,
+        ) {}
     s3 = new S3({
         
         accessKeyId: process.env.AWS_S3_USER_ACCESS_KEY,
@@ -15,11 +21,12 @@ export class WsS3Service {
     });
 
 
-    async uploadFile(file) {
+    async uploadFile(file): Promise<string> {
         
         const { originalname } = file;
 
-        await this.s3_upload(file.buffer, process.env.AWS_S3_BUCKET, originalname, file.mimetype);
+        const loction = await this.s3_upload(file.buffer, process.env.AWS_S3_BUCKET, originalname, file.mimetype);
+        return loction;
     }
 
     private async s3_upload(file, bucket, name, mimetype)
@@ -43,7 +50,8 @@ export class WsS3Service {
 
         try {
             const s3Response = await this.s3.upload(params).promise();
-            console.log(s3Response);
+            console.log('s3Response :>> ', s3Response);
+            return s3Response.Location;
         }
         catch (e) {
             console.log(e);
