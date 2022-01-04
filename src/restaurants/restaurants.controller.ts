@@ -9,7 +9,7 @@ import { UpdateOptions } from 'sequelize';
 import { WsS3Service } from './ws-s3/ws-s3.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@Controller('api/restaurants')
+@Controller('restaurants')
 export class RestaurantsController {
   constructor(
     @InjectModel(Restaurants)
