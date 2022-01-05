@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/sequelize": "^8.0.0",
     "aws-sdk": "^2.1049.0",
+    "class-validator": "^0.13.2",
     "multer": "^1.4.4",
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",

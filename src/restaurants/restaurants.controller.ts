@@ -8,6 +8,8 @@ import { Request, Response } from 'express';
 import { UpdateOptions } from 'sequelize';
 import { WsS3Service } from './ws-s3/ws-s3.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { RestaurantsValidator } from './validator/validator';
+import { validate } from 'class-validator';
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -57,9 +59,18 @@ export class RestaurantsController {
   @Put(':id')
   async update(@Param('id') id: string, @Req() request: Request, @Res() res: Response):Promise<Restaurant|any> {
     const { name, ubicacion, description, state } = request.body;
-    if(!name || !ubicacion || !description) return res.status(400).json({error: 'faltan datos'});
+    const validacion = new RestaurantsValidator();
+    validacion.state = state;
+    validacion.id = +id;
+    validacion.name = name;
+    validacion.ubicacion = ubicacion;
+    validacion.description = description;
+    if(!name || !ubicacion || !description) return res.status(400).json({error: 'faltan datossss'});
     console.log(id, name, ubicacion, description);
     try {
+      const errors = await validate(validacion);
+      console.log('errors.length :>> ', errors.length);
+      if(errors.length) return res.status(400).json({ errors });
       const d = await this.RestaurantsModel.update({name, ubicacion, description, state} , { where: { id } } );
       return res.json({mensje: 'se ctulizo correctmente'});
     } catch (error) {
