@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Model, Column, PrimaryKey, Table, AutoIncrement, TableOptions } from 'sequelize-typescript';
+// import { DeleteDateColumn } from 'typeorm';
 
 const options: TableOptions = {
   freezeTableName: true,
@@ -28,4 +29,7 @@ export class Restaurants extends Model {
 
   @Column
   state: boolean;
+
+  // @DeleteDateColumn()
+  // deletedAt?: Date;
 }

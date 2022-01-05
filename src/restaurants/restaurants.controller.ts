@@ -26,33 +26,33 @@ export class RestaurantsController {
     @Get(':id')
     async findOne(@Param('id') id: string, @Res() res: Response): Promise<any> {
       try {
-        const user = await this.RestaurantsModel.findByPk( id );
-        return res.json({mensje: 'se creo correctmente', user});
+        const restaurant = await this.RestaurantsModel.findByPk( id );
+        return res.json(restaurant);
       } catch (error) {
-        return res.json({error});
+        return res.json({mensje:'no se encuentrs el restaurante', error});
       }
     
   }
 
   @Post()
   async create(@Req() request: Request, @Res() res: Response): Promise<Restaurant|any> {
-    const { name, ubicacion, image, description, state } = request.body;
-    if(!name || !ubicacion || !description || !state) return res.status(400).json({error: 'faltan datos'});
+    const { name, ubicacion, description, state = true } = request.body;
+    if(!name || !ubicacion || !description) return res.status(400).json({error: 'faltan datos'});
     
     try {
-      const d = await this.RestaurantsModel.create({name, ubicacion, image, description, state });
+      const d = await this.RestaurantsModel.create({name, ubicacion, description, state });
       return res.json({mensje: 'se creo correctmente'});
     } catch (error) {
-      return res.json({error});
+      return res.json({error, mesje: 'no se pudo crer el restaurant'});
     }
     
   }
 
   @Put(':id')
   async update(@Param('id') id: string, @Req() request: Request, @Res() res: Response):Promise<Restaurant|any> {
-    const { name, ubicacion, image, description, state } = request.body;
-    if(!name || !ubicacion || !description || !state) return res.status(400).json({error: 'faltan datos'});
-    console.log(id, name, ubicacion, description, state);
+    const { name, ubicacion, description, state } = request.body;
+    if(!name || !ubicacion || !description) return res.status(400).json({error: 'faltan datos'});
+    console.log(id, name, ubicacion, description);
     try {
       const d = await this.RestaurantsModel.update({name, ubicacion, description, state} , { where: { id } } );
       return res.json({mensje: 'se ctulizo correctmente'});
@@ -68,7 +68,7 @@ export class RestaurantsController {
     try {
       const userDelete = await this.RestaurantsModel.update({state: false}, { where: { id } } );
       console.log('userDelete :>> ', userDelete);
-      return res.json({user:userDelete});
+      return res.json({restaurant:userDelete});
     } catch (error) {
       return res.status(400).json({error});
     }
