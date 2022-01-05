@@ -74,7 +74,7 @@ export class RestaurantsController {
     try {
       const userDelete = await this.RestaurantsModel.update({state: false}, { where: { id } } );
       console.log('userDelete :>> ', userDelete);
-      return res.json({restaurant:userDelete});
+      return res.json({mensje: 'se elimino correctmente'});
     } catch (error) {
       return res.status(400).json({error});
     }
