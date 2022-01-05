@@ -46,8 +46,16 @@ export class RestaurantsController {
   async create(@Req() request: Request, @Res() res: Response): Promise<Restaurant|any> {
     const { name, ubicacion, description, state = true } = request.body;
     if(!name || !ubicacion || !description) return res.status(400).json({error: 'faltan datos'});
+    const validacion = new RestaurantsValidator();
+    validacion.state = state;
+    validacion.name = name;
+    validacion.ubicacion = ubicacion;
+    validacion.description = description;
     
     try {
+      const errors = await validate(validacion);
+      console.log('errors.length :>> ', errors.length);
+      if(errors.length) return res.status(400).json({ errors });
       const d = await this.RestaurantsModel.create({name, ubicacion, description, state });
       return res.json({mensje: 'se creo correctmente',restaurant: d});
     } catch (error) {
