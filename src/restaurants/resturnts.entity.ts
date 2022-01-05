@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
-import { Model, Column, PrimaryKey, Table, AutoIncrement, TableOptions } from 'sequelize-typescript';
+import { Model, Column, PrimaryKey, Table, AutoIncrement, TableOptions, DeletedAt } from 'sequelize-typescript';
 // import { DeleteDateColumn } from 'typeorm';
 
 const options: TableOptions = {
   freezeTableName: true,
   createdAt: false,
   updatedAt: false,
-  modelName: 'restaurant'
+  modelName: 'restaurant',
+  // paranoid
 }
 
 @Table(options)
@@ -30,6 +31,7 @@ export class Restaurants extends Model {
   @Column
   state: boolean;
 
-  // @DeleteDateColumn()
-  // deletedAt?: Date;
+  @Column @DeletedAt
+  deletedAt?: Date;
+  // deletedAt?: 'destroyTime'
 }

@@ -55,4 +55,19 @@ export class WsS3Service {
             console.log(e);
         }
     }
+
+    async getImage() {
+        const data =  this.s3.getObject(
+        {
+            Bucket: 'companyimages',
+            Key: 'your stored image'
+        }).promise();
+        return data;
+    }
+    encode(data) {
+        const buf = Buffer.from(data);
+        const base64 = buf.toString('base64');
+        return base64
+    }
+    
 }

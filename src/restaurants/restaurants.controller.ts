@@ -22,7 +22,7 @@ export class RestaurantsController {
     async findAll(@Res() res: Response): Promise<Restaurant[]|any> {
       try {
         
-        const restaurants = await this.RestaurantsModel.findAll({ where: { state: true } });
+        const restaurants = await this.RestaurantsModel.findAll();
         res.json(restaurants);
       } catch (error) {
         return res.status(400).json({mensje:'no se encuentrs el restaurante', error});
@@ -72,7 +72,8 @@ export class RestaurantsController {
   async remove(@Param('id') id: string, @Req() request: Request, @Res() res: Response): Promise<any> {
     console.log('id :>> ', id);
     try {
-      const userDelete = await this.RestaurantsModel.update({state: false}, { where: { id } } );
+      const userDelete = await this.RestaurantsModel.destroy({where: { id }});
+      // const userDelete = await this.RestaurantsModel.update({state: false}, { where: { id } } );
       console.log('userDelete :>> ', userDelete);
       return res.json({mensje: 'se elimino correctmente'});
     } catch (error) {
