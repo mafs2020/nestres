@@ -19,8 +19,14 @@ export class RestaurantsController {
   ) {}
 
     @Get()
-    async findAll(): Promise<Restaurant[]> {
-      return await this.RestaurantsModel.findAll({ where: { state: true } });
+    async findAll(@Res() res: Response): Promise<Restaurant[]|any> {
+      try {
+        
+        const restaurants = await this.RestaurantsModel.findAll({ where: { state: true } });
+        res.json(restaurants);
+      } catch (error) {
+        return res.status(400).json({mensje:'no se encuentrs el restaurante', error});
+      }
     }
 
     @Get(':id')
@@ -29,7 +35,7 @@ export class RestaurantsController {
         const restaurant = await this.RestaurantsModel.findByPk( id );
         return res.json(restaurant);
       } catch (error) {
-        return res.json({mensje:'no se encuentrs el restaurante', error});
+        return res.status(400).json({mensje:'no se encuentrs el restaurante', error});
       }
     
   }
@@ -41,9 +47,9 @@ export class RestaurantsController {
     
     try {
       const d = await this.RestaurantsModel.create({name, ubicacion, description, state });
-      return res.json({mensje: 'se creo correctmente'});
+      return res.json({mensje: 'se creo correctmente',restaurant: d});
     } catch (error) {
-      return res.json({error, mesje: 'no se pudo crer el restaurant'});
+      return res.status(400).json({error, mensje: 'no se pudo crer el restaurant'});
     }
     
   }
@@ -57,7 +63,7 @@ export class RestaurantsController {
       const d = await this.RestaurantsModel.update({name, ubicacion, description, state} , { where: { id } } );
       return res.json({mensje: 'se ctulizo correctmente'});
     } catch (error) {
-      return res.json({error});
+      return res.status(400).json({error});
     }
     
   }
