@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import {
-    IsBoolean, IsInt, IsString,
+    IsBoolean, IsString,
     // validate,
     // validateOrReject,
     // Contains,
@@ -11,17 +11,17 @@ import {
     // IsDate,
   } from 'class-validator';
   
-  export class RestaurantsValidator {
+  export class RestaurantsDTO {
 
-
+    // @IsNotEmpty({message: 'campo vcio ->booleno'})
     @IsBoolean({message: 'campo erroneo ->booleno'})
     state: boolean;
 
     @IsString({message: 'campo erroneo -> nombre'})
     name: string;
 
-    @IsInt({message: 'campo erroneo -> id'})
-    id: number;
+    // @IsInt({message: 'campo erroneo -> id'})
+    // id?: number;
 
     @IsString({message: 'campo erroneo -> ubicacion'})
     ubicacion: string;

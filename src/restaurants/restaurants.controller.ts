@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Req, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Restaurant } from './interfaces/restaurant';
 import { Restaurants } from './resturnts.entity';
@@ -8,7 +8,7 @@ import { Request, Response } from 'express';
 import { UpdateOptions } from 'sequelize';
 import { WsS3Service } from './ws-s3/ws-s3.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { RestaurantsValidator } from './validator/validator';
+import { RestaurantsDTO } from './validator/validator';
 import { validate } from 'class-validator';
 
 @Controller('restaurants')
@@ -43,48 +43,31 @@ export class RestaurantsController {
   }
 
   @Post()
-  async create(@Req() request: Request, @Res() res: Response): Promise<Restaurant|any> {
-    const { name, ubicacion, description, state = true } = request.body;
-    if(!name || !ubicacion || !description) return res.status(400).json({error: 'faltan datos'});
-    const validacion = new RestaurantsValidator();
-    validacion.state = state;
-    validacion.name = name;
-    validacion.ubicacion = ubicacion;
-    validacion.description = description;
-    
-    try {
-      const errors = await validate(validacion);
-      console.log('errors.length :>> ', errors.length);
-      if(errors.length) return res.status(400).json({ errors });
-      const d = await this.RestaurantsModel.create({name, ubicacion, description, state });
-      return res.json({mensje: 'se creo correctmente',restaurant: d});
-    } catch (error) {
-      return res.status(400).json({error, mensje: 'no se pudo crer el restaurant'});
-    }
+  @UsePipes(new ValidationPipe())
+  // @Req() request: Request, 
+  // @Res() res: Response
+  async create(@Body() restaurantsDTO: RestaurantsDTO): Promise<Restaurant|any> {
+    // const { name, ubicacion, description, state = true } = request.body;
+    console.log('restaurantsDTO :>> ', restaurantsDTO);
+    // return res.end();
+    return await this.RestaurantsModel.create({
+      name : restaurantsDTO.name,
+      description: restaurantsDTO.description,
+      state: restaurantsDTO.state,
+      ubicacion: restaurantsDTO.ubicacion
+    });
+    // return res.json({mensje: 'se creo correctmente',restaurant: d});
+    // try {
+    // } catch (error) {
+    //   return res.status(400).json({error, mensje: 'no se pudo crer el restaurant'});
+    // }
     
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Req() request: Request, @Res() res: Response):Promise<Restaurant|any> {
-    const { name, ubicacion, description, state } = request.body;
-    const validacion = new RestaurantsValidator();
-    validacion.state = state;
-    validacion.id = +id;
-    validacion.name = name;
-    validacion.ubicacion = ubicacion;
-    validacion.description = description;
-    if(!name || !ubicacion || !description) return res.status(400).json({error: 'faltan datossss'});
-    console.log(id, name, ubicacion, description);
-    try {
-      const errors = await validate(validacion);
-      console.log('errors.length :>> ', errors.length);
-      if(errors.length) return res.status(400).json({ errors });
-      const d = await this.RestaurantsModel.update({name, ubicacion, description, state} , { where: { id } } );
-      return res.json({mensje: 'se ctulizo correctmente'});
-    } catch (error) {
-      return res.status(400).json({error});
-    }
-    
+  @UsePipes(new ValidationPipe())
+  async update(@Param('id') id: string, @Req() @Body() restaurantsDTO: RestaurantsDTO):Promise<Restaurant|any> {
+    return await this.RestaurantsModel.update(restaurantsDTO , { where: { id } } );
   }
 
   @Delete(':id')
