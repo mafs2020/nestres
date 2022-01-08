@@ -10,6 +10,7 @@ import { WsS3Service } from './ws-s3/ws-s3.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RestaurantsDTO } from './validator/validator';
 import { validate } from 'class-validator';
+import { RestaurantService } from './restaurant/restaurant.service';
 
 @Controller('restaurants')
 export class RestaurantsController {
@@ -17,28 +18,25 @@ export class RestaurantsController {
     @InjectModel(Restaurants)
         private RestaurantsModel: typeof Restaurants,
         private wsS3Service: WsS3Service,
+        private readonly restaurantService: RestaurantService
         
   ) {}
 
     @Get()
-    async findAll(@Res() res: Response): Promise<Restaurant[]|any> {
-      try {
-        
-        const restaurants = await this.RestaurantsModel.findAll();
-        res.json(restaurants);
-      } catch (error) {
-        return res.status(400).json({mensje:'no se encuentrs el restaurante', error});
-      }
+    async findAll(): Promise<Restaurant[]|any> {
+      return await this.restaurantService.findAll();
+      
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string, @Res() res: Response): Promise<any> {
-      try {
-        const restaurant = await this.RestaurantsModel.findByPk( id );
-        return res.json(restaurant);
-      } catch (error) {
-        return res.status(400).json({mensje:'no se encuentrs el restaurante', error});
-      }
+    async findOne(@Param('id') id: string): Promise<any> {
+      return await this.restaurantService.findOne(+id);
+      // try {
+      //   const restaurant = await this.RestaurantsModel.findByPk( id );
+      //   return res.json(restaurant);
+      // } catch (error) {
+      //   return res.status(400).json({mensje:'no se encuentrs el restaurante', error});
+      // }
     
   }
 
@@ -49,38 +47,21 @@ export class RestaurantsController {
   async create(@Body() restaurantsDTO: RestaurantsDTO): Promise<Restaurant|any> {
     // const { name, ubicacion, description, state = true } = request.body;
     console.log('restaurantsDTO :>> ', restaurantsDTO);
-    // return res.end();
-    return await this.RestaurantsModel.create({
-      name : restaurantsDTO.name,
-      description: restaurantsDTO.description,
-      state: restaurantsDTO.state,
-      ubicacion: restaurantsDTO.ubicacion
-    });
-    // return res.json({mensje: 'se creo correctmente',restaurant: d});
-    // try {
-    // } catch (error) {
-    //   return res.status(400).json({error, mensje: 'no se pudo crer el restaurant'});
-    // }
+    return await this.restaurantService.create(restaurantsDTO as Restaurant);
     
   }
 
   @Put(':id')
   @UsePipes(new ValidationPipe())
-  async update(@Param('id') id: string, @Req() @Body() restaurantsDTO: RestaurantsDTO):Promise<Restaurant|any> {
-    return await this.RestaurantsModel.update(restaurantsDTO , { where: { id } } );
+  async update(@Param('id') id: string, @Body() restaurantsDTO: RestaurantsDTO):Promise<Restaurant|any> {
+    return await this.restaurantService.update(+id, restaurantsDTO as Restaurant);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Req() request: Request, @Res() res: Response): Promise<any> {
+  async remove(@Param('id') id: string): Promise<any> {
     console.log('id :>> ', id);
-    try {
-      const userDelete = await this.RestaurantsModel.destroy({where: { id }});
+      return await this.restaurantService.remove(+id);
       // const userDelete = await this.RestaurantsModel.update({state: false}, { where: { id } } );
-      console.log('userDelete :>> ', userDelete);
-      return res.json({mensje: 'se elimino correctmente'});
-    } catch (error) {
-      return res.status(400).json({error});
-    }
   }
 
   @Post('upload/:id')
