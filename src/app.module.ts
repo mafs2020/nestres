@@ -11,6 +11,7 @@ import { RestaurantsModule } from './restaurants/restaurants.module';
 
 import { ConfigModule } from '@nestjs/config';
 import { NombreModule } from './nombre/nombre.module';
+import { DrModule } from './dr/dr.module';
 console.log(`app accessKeyId: ${process.env.AWS_S3_ACCESS_KEY},`);
 console.log(`app secretAccessKey: ${process.env.AWS_S3_KEY_SECRET},`);
 
@@ -22,6 +23,7 @@ console.log(`app secretAccessKey: ${process.env.AWS_S3_KEY_SECRET},`);
     RestaurantsModule,
     DBModule,
     NombreModule,
+    DrModule,
   ],
   controllers: [AppController],
   providers: [AppService],

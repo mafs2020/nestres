@@ -9,7 +9,7 @@ import { Restaurants } from './restaurants/resturnts.entity';
         host: 'localhost',
         port: 3306,
         username: 'root',
-        password: 'Mafs1920',
+        password: '++++++++',
         database: 'restaurants',
         models: [Restaurants],
     })]
