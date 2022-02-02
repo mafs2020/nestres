@@ -10,10 +10,9 @@ import { DBModule } from './db.module';
 import { RestaurantsModule } from './restaurants/restaurants.module';
 
 import { ConfigModule } from '@nestjs/config';
-import { NombreModule } from './nombre/nombre.module';
-import { DrModule } from './dr/dr.module';
-console.log(`app accessKeyId: ${process.env.AWS_S3_ACCESS_KEY},`);
-console.log(`app secretAccessKey: ${process.env.AWS_S3_KEY_SECRET},`);
+import { UserModule } from './user/user.module';
+import { AuthController } from './auth/auth.controller';
+
 
 // console.log('process.env :>> ', process.env);
 
@@ -22,10 +21,9 @@ console.log(`app secretAccessKey: ${process.env.AWS_S3_KEY_SECRET},`);
     ConfigModule.forRoot({ isGlobal: true }),
     RestaurantsModule,
     DBModule,
-    NombreModule,
-    DrModule,
+    UserModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, AuthController],
   providers: [AppService],
 })
 export class AppModule {}
